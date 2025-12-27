@@ -60,6 +60,7 @@
             height: 100dvh;
             overflow: hidden;
             transition: background-color 0.3s;
+            overscroll-behavior: none;
         }
 
         @media (max-width: 600px) {
@@ -140,6 +141,7 @@
             align-items: center;
             background: var(--bg-color);
             z-index: 100;
+            touch-action: none;
         }
 
         .content-area {
@@ -190,6 +192,7 @@
             background: var(--bg-color);
             position: relative;
             /* Ensure progress bar is positioned relative to this */
+            touch-action: none;
         }
 
         #counter {
