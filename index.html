@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Reader Pro - ჭკვიანი მკითხველი</title>
+    <title>Smart Reader Pro</title>
     
-    <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <!-- Apple Touch Icon (ხატულა აიფონის ეკრანისთვის) -->
+    <link rel="apple-touch-icon" href="https://img.icons8.com/ios-filled/180/4a90e2/open-book.png">
     
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%234a90e2%22 rx=%2220%22/><text x=%2250%%22 y=%2250%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2260%22>📖</text></svg>">
-    
-    <!-- iOS Web App Meta -->
+    <!-- iOS Web App-ის პარამეტრები -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Reader Pro">
 
     <style>
         :root {
@@ -22,20 +20,17 @@
             --accent-color: #4a90e2;
             --card-bg: #ffffff;
             --font-size: 24px;
-            --ui-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --ui-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             
-            /* Safe area variables for iPhone Notch/Home Bar */
             --safe-top: env(safe-area-inset-top, 20px);
             --safe-bottom: env(safe-area-inset-bottom, 20px);
-            --safe-left: env(safe-area-inset-left, 0px);
-            --safe-right: env(safe-area-inset-right, 0px);
         }
 
         body.dark {
-            --bg-color: #121212;
-            --text-color: #e0e0e0;
-            --card-bg: #1e1e1e;
-            --accent-color: #3498db;
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --card-bg: #1c1c1e;
+            --accent-color: #0a84ff;
         }
 
         body.sepia {
@@ -48,6 +43,7 @@
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         body {
@@ -58,220 +54,171 @@
             color: var(--text-color);
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            height: 100dvh; /* Safari fix */
+            height: 100dvh;
             overflow: hidden;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.3s;
         }
 
-        /* Input Screen */
+        /* Setup Screen */
         #setup-screen {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            padding: calc(var(--safe-top) + 20px) 25px calc(var(--safe-bottom) + 20px);
             height: 100%;
-            padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 20px);
             max-width: 600px;
             margin: 0 auto;
             width: 100%;
         }
 
-        h1 { font-size: 2rem; margin-bottom: 5px; color: var(--accent-color); text-align: center; }
-        .subtitle { margin-bottom: 20px; opacity: 0.7; font-size: 0.9rem; text-align: center; }
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 5px; text-align: center; }
+        .subtitle { font-size: 14px; opacity: 0.6; text-align: center; margin-bottom: 20px; }
 
         textarea {
             width: 100%;
             flex-grow: 1;
             padding: 20px;
-            border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.1);
-            font-size: 16px;
-            line-height: 1.5;
-            resize: none;
-            margin-bottom: 20px;
+            border-radius: 14px;
+            border: none;
+            font-size: 17px;
+            line-height: 1.4;
             background-color: var(--card-bg);
             color: var(--text-color);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             -webkit-appearance: none;
+            user-select: text;
         }
 
         .primary-btn {
-            padding: 16px 40px;
-            font-size: 18px;
-            background-color: var(--accent-color);
+            background: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 30px;
-            cursor: pointer;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 17px;
             font-weight: 600;
+            margin-top: 20px;
             width: 100%;
-            max-width: 300px;
+            display: block;
         }
 
-        /* Reader Screen */
+        /* Reader Interface */
         #reader-screen {
             display: none;
             flex-direction: column;
             height: 100%;
-            position: relative;
         }
 
         .top-nav {
-            padding: var(--safe-top) var(--safe-right) 10px var(--safe-left);
+            padding: var(--safe-top) 20px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.03);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 10;
+            background: var(--bg-color);
+            z-index: 100;
         }
 
         .content-area {
             flex-grow: 1;
+            padding: 0 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 30px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
 
         #slide-text {
             font-size: var(--font-size);
-            line-height: 1.6;
-            max-width: 800px;
+            line-height: 1.5;
+            font-weight: 400;
             text-align: left;
-            padding-bottom: 40px;
+            width: 100%;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .bottom-nav {
-            padding: 15px var(--safe-right) calc(var(--safe-bottom) + 10px) var(--safe-left);
+            padding: 10px 20px calc(var(--safe-bottom) + 10px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.03);
-            border-top: 1px solid rgba(0,0,0,0.05);
+            background: var(--bg-color);
         }
 
-        .icon-btn {
+        .action-btn {
             background: var(--card-bg);
+            border: 1px solid rgba(0,0,0,0.05);
             color: var(--text-color);
-            border: 1px solid rgba(0,0,0,0.1);
-            padding: 12px 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 500;
         }
 
-        .slide-counter { font-weight: 600; font-size: 14px; opacity: 0.8; }
-
-        /* Settings Panel */
-        .settings-panel {
+        /* Settings Sheet (iOS Style) */
+        .settings-sheet {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: var(--card-bg);
-            padding: 25px 25px calc(var(--safe-bottom) + 20px);
-            border-radius: 24px 24px 0 0;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
-            z-index: 1000;
-            display: none;
+            border-radius: 20px 20px 0 0;
+            padding: 20px 20px calc(var(--safe-bottom) + 20px);
             transform: translateY(100%);
-            transition: transform 0.3s ease-out;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001;
         }
 
-        .settings-panel.active { 
-            display: block; 
-            transform: translateY(0);
+        .settings-sheet.active { transform: translateY(0); }
+
+        .sheet-handle {
+            width: 40px; height: 5px; background: rgba(0,0,0,0.1);
+            border-radius: 10px; margin: 0 auto 20px;
         }
 
-        .setting-item { margin-bottom: 15px; }
-        .setting-item label { display: block; font-size: 12px; margin-bottom: 5px; opacity: 0.6; text-transform: uppercase; }
-        .setting-item select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: var(--card-bg); color: var(--text-color); font-size: 16px; }
-
-        .progress-bar-wrap {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: rgba(0,0,0,0.05);
+        .setting-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        #progress-fill { height: 100%; background: var(--accent-color); width: 0%; transition: width 0.3s; }
-
-        #message-box {
-            position: fixed;
-            top: calc(var(--safe-top) + 10px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: none;
-            z-index: 3000;
-            width: 80%;
-            text-align: center;
+        select {
+            background: transparent; border: none; color: var(--accent-color);
+            font-size: 16px; font-weight: 500; -webkit-appearance: none;
         }
 
-        /* Overlay for Settings */
         #overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4);
-            display: none;
-            z-index: 999;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+            display: none; z-index: 1000;
         }
 
-        @media (min-width: 768px) {
-            #setup-screen { max-width: 800px; }
-            .settings-panel { 
-                width: 350px; 
-                top: 80px; 
-                right: 20px; 
-                left: auto; 
-                bottom: auto; 
-                border-radius: 20px; 
-                transform: none;
-            }
+        .progress-bar {
+            position: absolute; bottom: 0; left: 0; height: 2px;
+            background: var(--accent-color); transition: width 0.3s;
         }
     </style>
 </head>
 <body class="light">
 
-    <div id="message-box"></div>
     <div id="overlay" onclick="toggleSettings()"></div>
 
     <!-- SETUP SCREEN -->
     <div id="setup-screen">
-        <h1>Smart Reader Pro</h1>
-        <p class="subtitle">ტექსტი კომფორტულ სლაიდებად</p>
-        <textarea id="text-input" placeholder="ჩაწერეთ ტექსტი აქ..."></textarea>
-        <button class="primary-btn" onclick="processAndStart()">კითხვის დაწყება</button>
+        <h1>Smart Reader</h1>
+        <p class="subtitle">კითხვის ახალი გამოცდილება</p>
+        <textarea id="text-input" placeholder="ჩაწერეთ ან ჩააკოპირეთ ტექსტი..."></textarea>
+        <button class="primary-btn" onclick="startReading()">დაწყება</button>
     </div>
 
     <!-- READER SCREEN -->
     <div id="reader-screen">
         <div class="top-nav">
-            <button class="icon-btn" onclick="exitReader()">↩</button>
-            <div class="btn-group" style="display:flex; gap:8px;">
-                <select id="lang-select" class="icon-btn" style="padding: 10px;">
-                    <option value="ka-GE">🇬🇪 KA</option>
-                    <option value="en-US">🇺🇸 EN</option>
-                    <option value="ru-RU">🇷🇺 RU</option>
-                </select>
-                <button class="icon-btn" id="speak-btn" onclick="handleTTS()">🔊</button>
+            <button class="action-btn" onclick="exitReader()">←</button>
+            <div style="display: flex; gap: 8px;">
+                <button class="action-btn" id="speak-btn" onclick="handleTTS()">🔊</button>
+                <button class="action-btn" onclick="toggleSettings()">⚙️</button>
             </div>
-            <button class="icon-btn" onclick="toggleSettings()">⚙️</button>
         </div>
 
         <div class="content-area" id="swipe-area">
@@ -279,137 +226,112 @@
         </div>
 
         <div class="bottom-nav">
-            <button class="icon-btn" onclick="prevSlide()">❮ წინა</button>
-            <div class="slide-counter" id="counter">1 / 1</div>
-            <button class="icon-btn" onclick="nextSlide()">შემდეგი ❯</button>
-        </div>
-
-        <div class="progress-bar-wrap">
-            <div id="progress-fill"></div>
+            <button class="action-btn" onclick="prevSlide()">წინა</button>
+            <span id="counter" style="font-size: 13px; font-weight: 600; opacity: 0.5;">1 / 1</span>
+            <button class="action-btn" onclick="nextSlide()">შემდეგი</button>
+            <div class="progress-bar" id="progress"></div>
         </div>
     </div>
 
-    <!-- SETTINGS PANEL -->
-    <div class="settings-panel" id="settings-panel">
-        <div class="setting-item">
-            <label>თემა</label>
+    <!-- SETTINGS SHEET -->
+    <div class="settings-sheet" id="settings-sheet">
+        <div class="sheet-handle"></div>
+        <div class="setting-row">
+            <span>თემა</span>
             <select onchange="setTheme(this.value)">
-                <option value="light">თეთრი</option>
-                <option value="dark">ბნელი</option>
-                <option value="sepia">სეპია</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="sepia">Sepia</option>
             </select>
         </div>
-        <div class="setting-item">
-            <label>ტექსტის ზომა</label>
+        <div class="setting-row">
+            <span>ტექსტის ზომა</span>
             <select onchange="setFontSize(this.value)">
-                <option value="18px">პატარა</option>
+                <option value="20px">პატარა</option>
                 <option value="24px" selected>საშუალო</option>
                 <option value="30px">დიდი</option>
-                <option value="38px">ექსტრა</option>
             </select>
         </div>
-        <button class="primary-btn" style="width:100%; margin-top: 10px;" onclick="toggleSettings()">მზადაა</button>
+        <div class="setting-row">
+            <span>ენა</span>
+            <select id="lang-select">
+                <option value="ka-GE">ქართული</option>
+                <option value="en-US">English</option>
+            </select>
+        </div>
+        <button class="primary-btn" onclick="toggleSettings()">შენახვა</button>
     </div>
 
     <script>
         let slides = [];
         let currentIndex = 0;
-        const synth = window.speechSynthesis;
-        let touchStartX = 0;
-        let touchEndX = 0;
+        let startX = 0;
 
-        function showMessage(text) {
-            const box = document.getElementById('message-box');
-            box.innerText = text;
-            box.style.display = 'block';
-            setTimeout(() => { box.style.display = 'none'; }, 3000);
-        }
-
-        function processAndStart() {
+        function startReading() {
             const text = document.getElementById('text-input').value.trim();
             if (!text) return;
-            
-            // Split into chunks of around 400 characters, respecting sentences
-            const rawParagraphs = text.split(/\n+/);
-            slides = [];
-            rawParagraphs.forEach(p => {
-                if (p.length > 500) {
-                    const sentences = p.match(/[^.!?]+[.!?]+/g) || [p];
-                    let current = "";
-                    sentences.forEach(s => {
-                        if ((current + s).length > 500) {
-                            slides.push(current.trim());
-                            current = s;
-                        } else {
-                            current += s;
-                        }
-                    });
-                    if (current) slides.push(current.trim());
-                } else if (p.trim()) {
-                    slides.push(p.trim());
-                }
-            });
 
+            // Split logic
+            slides = text.split(/\n+/).filter(p => p.trim());
             currentIndex = 0;
+            
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('reader-screen').style.display = 'flex';
-            updateSlide();
+            updateUI();
         }
 
-        function updateSlide() {
+        function updateUI() {
             const el = document.getElementById('slide-text');
-            el.style.opacity = 0;
-            setTimeout(() => {
-                el.innerText = slides[currentIndex];
-                el.style.opacity = 1;
-                document.getElementById('counter').innerText = `${currentIndex + 1} / ${slides.length}`;
-                document.getElementById('progress-fill').style.width = ((currentIndex + 1) / slides.length * 100) + '%';
-                document.querySelector('.content-area').scrollTop = 0;
-            }, 150);
-            if (synth.speaking) synth.cancel();
+            el.innerText = slides[currentIndex];
+            document.getElementById('counter').innerText = `${currentIndex + 1} / ${slides.length}`;
+            document.getElementById('progress').style.width = ((currentIndex + 1) / slides.length * 100) + '%';
+            window.speechSynthesis.cancel();
         }
 
-        function nextSlide() { if (currentIndex < slides.length - 1) { currentIndex++; updateSlide(); } }
-        function prevSlide() { if (currentIndex > 0) { currentIndex--; updateSlide(); } }
+        function nextSlide() { if (currentIndex < slides.length - 1) { currentIndex++; updateUI(); } }
+        function prevSlide() { if (currentIndex > 0) { currentIndex--; updateUI(); } }
 
         function toggleSettings() {
-            const panel = document.getElementById('settings-panel');
+            const sheet = document.getElementById('settings-sheet');
             const overlay = document.getElementById('overlay');
-            const isActive = panel.classList.toggle('active');
+            const isActive = sheet.classList.toggle('active');
             overlay.style.display = isActive ? 'block' : 'none';
         }
 
         function setTheme(t) { document.body.className = t; }
         function setFontSize(s) { document.documentElement.style.setProperty('--font-size', s); }
-        function exitReader() { 
-            synth.cancel(); 
+        function exitReader() {
             document.getElementById('reader-screen').style.display = 'none';
             document.getElementById('setup-screen').style.display = 'flex';
+            window.speechSynthesis.cancel();
         }
 
         function handleTTS() {
-            if (synth.speaking) { synth.cancel(); return; }
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                return;
+            }
             const utterance = new SpeechSynthesisUtterance(slides[currentIndex]);
             utterance.lang = document.getElementById('lang-select').value;
-            utterance.rate = 0.9;
-            synth.speak(utterance);
+            window.speechSynthesis.speak(utterance);
         }
 
-        // Swipe Gestures for iPhone
-        const swipeArea = document.getElementById('swipe-area');
-        swipeArea.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
-        swipeArea.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchStartX - touchEndX > 50) nextSlide();
-            if (touchEndX - touchStartX > 50) prevSlide();
-        }, false);
+        // Swipe handling
+        const area = document.getElementById('swipe-area');
+        area.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        area.addEventListener('touchend', e => {
+            const diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) diff > 0 ? nextSlide() : prevSlide();
+        });
 
-        // Prevent body scroll but allow content scroll
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('.content-area') || e.target.closest('textarea')) return;
-            e.preventDefault();
-        }, { passive: false });
-
+        // Save last text
+        window.onload = () => {
+            const saved = localStorage.getItem('last_reader_text');
+            if (saved) document.getElementById('text-input').value = saved;
+        };
+        document.getElementById('text-input').oninput = (e) => {
+            localStorage.setItem('last_reader_text', e.target.value);
+        };
     </script>
 </body>
 </html>
